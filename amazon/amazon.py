@@ -3,11 +3,11 @@ import re
 import pandas as pd
 from bs4 import BeautifulSoup
 
-proxy_host = "vienna1.thesocialproxy.com"
+proxy_host = "<residential>.thesocialproxy.com" #add yours
 proxy_port = "10000"
 proxy_url = f"http://{proxy_host}:{proxy_port}"
-proxy_username = "09bk1yv3mtxahdnpas3"
-proxy_password = "4mtanfsqeczh9l2jw31"
+proxy_username = "USERNAME" #username
+proxy_password = "PASSWORD" #password
 proxy_url = f"http://{proxy_username}:{proxy_password}@{proxy_host}:{proxy_port}"
 
 proxies = { "http": proxy_url, "https": proxy_url }
