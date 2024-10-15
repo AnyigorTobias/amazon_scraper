@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+requests = "*"
+pydantic = "*"
+pydantic-settings = "*"
+beautifulsoup4 = "*"
+pandas = "*"
+ipykernel = "*"
+fake-useragent = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
