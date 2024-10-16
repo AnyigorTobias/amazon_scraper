@@ -3,11 +3,12 @@ import re
 import pandas as pd
 from bs4 import BeautifulSoup
 
-proxy_host = "<residential>.thesocialproxy.com" #add yours
+
+proxy_host = "london1.thesocialproxy.com"
 proxy_port = "10000"
 proxy_url = f"http://{proxy_host}:{proxy_port}"
-proxy_username = "USERNAME" #username
-proxy_password = "PASSWORD" #password
+proxy_username = "erw2uaqx83gzblsc"
+proxy_password = "xr1zeol08an6upv4"
 proxy_url = f"http://{proxy_username}:{proxy_password}@{proxy_host}:{proxy_port}"
 
 proxies = { "http": proxy_url, "https": proxy_url }
@@ -214,18 +215,43 @@ def extract_info_to_dataframe(url, proxies):
             "Review Text": review_text
         })
 
-    merged_list = []
+    h = pd.DataFrame.from_dict(product_info)
     
-    merged_list.extend(product_info)
-    merged_list.extend(similar_products)
-    merged_list.extend(review_data)
-            
-    df = pd.DataFrame.from_dict(merged_list)
-    df.to_csv('amz_research_sheet.csv', index=False)
-    print("File saved succesfully")
+    #convert the list to a pandas series
+    i = pd.Series(similar_products)
+    
+    #convert the list to a pandas series
+    j = pd.Series(review_data)
+    
+    #this results in a dataframe with a column containing the dictionaries  
+    #similar_products_title and similar_products_name in one column under 0
+    # and the dictionaries in review_data in one column named 1
+    df = pd.concat([h,i,j], axis = 1)
+    
+    # Extract the two columns from the dictionaries in column "0"
+    sp = pd.json_normalize(df[0])
 
-    # Create a DataFrame from the collected data
+    # Rename the columns as needed
+    sp.columns = ['similar_products_title', 'similar_products_price']
+    
+    # Extract the two columns from the dictionaries in column "1"
+    rp = pd.json_normalize(df[1])
+    
+    # Rename the columns as needed
+    rp.columns = ['Reviewer Name', 'rating', 'location', 'review text']
+    
+    # Concatenate the new columns with the original DataFrame
+    df = pd.concat([df, sp], axis=1)
+    df = pd.concat([df, rp], axis=1)
+    #Drop the unwanted columns
+    df.drop(columns=[0,1], inplace=True)
+    # df = pd.DataFrame.from_dict(merged_list)
+    
+    df.to_csv('amz_data.csv', index=False)
+    print("file saved successfully, check your project directory")
+
     pass
+
 
 if __name__ == "__main__":
     extract_info_to_dataframe(url, proxies)
