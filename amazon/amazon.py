@@ -4,11 +4,11 @@ import pandas as pd
 from bs4 import BeautifulSoup
 
 
-proxy_host = "london1.thesocialproxy.com"
+proxy_host = "<residential>.thesocialproxy.com" #add yours
 proxy_port = "10000"
 proxy_url = f"http://{proxy_host}:{proxy_port}"
-proxy_username = "erw2uaqx83gzblsc"
-proxy_password = "xr1zeol08an6upv4"
+proxy_username = "USERNAME" #username
+proxy_password = "PASSWORD" #password
 proxy_url = f"http://{proxy_username}:{proxy_password}@{proxy_host}:{proxy_port}"
 
 proxies = { "http": proxy_url, "https": proxy_url }
@@ -33,24 +33,8 @@ page = session.get(url, headers=header)
 assert page.status_code == 200
 soup = BeautifulSoup(page.content, 'html.parser')
 
-#start:delete after first run
-title = soup.find('span', attrs={'id': 'productTitle'}).get_text(strip=True)
-print(title)
-price = soup.find('span', attrs={'class': 'a-offscreen'}).get_text(strip=True)
-print(price)
 
-feature_bullets = soup.find('div', id='feature-bullets')
-if feature_bullets:
-    ul = feature_bullets.find('ul', class_='a-unordered-list')
-    if ul:
-        # Extract text from each 'li' tag within the 'ul'
-        for li in ul.find_all('li', class_='a-spacing-mini'):
-            bullet_text = li.get_text(strip=True)
-            print(bullet_text)
             
-#end 
-            
-
 def get_page_content(url, proxies):
     
     header = {
