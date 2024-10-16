@@ -5,8 +5,6 @@ name = "pypi"
 
 [packages]
 requests = "*"
-pydantic = "*"
-pydantic-settings = "*"
 beautifulsoup4 = "*"
 pandas = "*"
 ipykernel = "*"
