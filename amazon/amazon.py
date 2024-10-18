@@ -1,5 +1,6 @@
-import requests 
+import os
 import re
+import requests 
 import pandas as pd
 from bs4 import BeautifulSoup
 
@@ -146,7 +147,7 @@ def get_review_details(review):
         
     return name, country, rating, review_text
 
-
+file_path = 'amz_data.csv'
 
 def extract_info_to_dataframe(url, proxies):
     
@@ -179,25 +180,27 @@ def extract_info_to_dataframe(url, proxies):
     foreign_reviews = soup.find_all('div', class_='a-section review aok-relative cr-desktop-review-page-0')
     for review in foreign_reviews:
         name, country, rating, review_text = get_review_details(review)
-        review_details.append((name, country, rating, review_text))
-    
-    #Extract reviews from users in countries outside USA
-    us_reviews = soup.find_all('div', attrs={'data-hook': 'review', 'class': 'a-section review aok-relative'})
-    for review in us_reviews:
-        name, country, rating, review_text = get_review_details(review)
-        review_details.append((name, country, rating, review_text))
-
-    # Prepare the product information for DataFrame
-    # for product_title, final_price in similar_products:
-    review_data = []
-    for reviewer in review_details:
-        name, country, rating, review_text = reviewer
-        review_data.append({
+        review_details.append({
             "Reviewer Name": name,
             "Location": country,
             "Rating": rating,
             "Review Text": review_text
         })
+    
+    #Extract reviews from users in countries outside USA
+    us_reviews = soup.find_all('div', attrs={'data-hook': 'review', 'class': 'a-section review aok-relative'})
+    for review in us_reviews:
+        name, country, rating, review_text = get_review_details(review)
+        review_details.append({
+            "Reviewer Name": name,
+            "Location": country,
+            "Rating": rating,
+            "Review Text": review_text
+        })
+
+    # Prepare the product information for DataFrame
+    # for product_title, final_price in similar_products:
+   
 
     h = pd.DataFrame.from_dict(product_info)
     
@@ -205,7 +208,7 @@ def extract_info_to_dataframe(url, proxies):
     i = pd.Series(similar_products)
     
     #convert the list to a pandas series
-    j = pd.Series(review_data)
+    j = pd.Series(review_details)
     
     #this results in a dataframe with a column containing the dictionaries  
     #similar_products_title and similar_products_name in one column under 0
@@ -216,13 +219,13 @@ def extract_info_to_dataframe(url, proxies):
     sp = pd.json_normalize(df[0])
 
     # Rename the columns as needed
-    sp.columns = ['similar_products_title', 'similar_products_price']
+    sp.columns = ['Similar Products Title', 'Similar Products Price']
     
     # Extract the two columns from the dictionaries in column "1"
     rp = pd.json_normalize(df[1])
     
     # Rename the columns as needed
-    rp.columns = ['Reviewer Name', 'rating', 'location', 'review text']
+    rp.columns = ['Reviewer Name', 'Rating', 'Location', 'Review Text']
     
     # Concatenate the new columns with the original DataFrame
     df = pd.concat([df, sp], axis=1)
@@ -231,10 +234,16 @@ def extract_info_to_dataframe(url, proxies):
     df.drop(columns=[0,1], inplace=True)
     # df = pd.DataFrame.from_dict(merged_list)
     
-    df.to_csv('amz_data.csv', index=False)
-    print("file saved successfully, check your project directory")
+    if os.path.exists(file_path):
+        # If it exists, delete it
+        os.remove(file_path)
 
+    # Save the new dataframe (it will overwrite if the file existed)
+    df.to_csv(file_path, index=False)
+
+    # Create a DataFrame from the collected data
     pass
+
 
 
 if __name__ == "__main__":

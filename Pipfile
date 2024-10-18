@@ -9,6 +9,7 @@ beautifulsoup4 = "*"
 pandas = "*"
 ipykernel = "*"
 fake-useragent = "*"
+selenium = "*"
 
 [dev-packages]
 
